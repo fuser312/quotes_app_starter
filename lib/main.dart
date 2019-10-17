@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'quote_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -19,7 +20,10 @@ class QuotesPage extends StatefulWidget {
 
 class _QuotesPageState extends State<QuotesPage> {
 
+  bool loading = false;
+
   Future<Map> Quotes()async{
+    isLoading();
     Response response = await get("https://favqs.com/api/qotd");
 
     Map<String, dynamic> mapOfQuotes = jsonDecode(response.body);
@@ -27,8 +31,14 @@ class _QuotesPageState extends State<QuotesPage> {
     return mapOfQuotes;
   }
 
-  String quoteText = "Quote HERE";
-  String authorName = "Author HERE";
+  isLoading(){
+    loading = true;
+    setState(() {
+    });
+  }
+
+  String quoteText = "'Quintilius Varus, give me back my legions!'";
+  String authorName = "Augustus Caeser";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,14 +78,17 @@ class _QuotesPageState extends State<QuotesPage> {
                   alignment: Alignment.topLeft,
                   child: FloatingActionButton(
                     backgroundColor: Colors.white,
-                    child: Icon(
+                    child: loading? SpinKitDoubleBounce(
+                      color: Colors.blue,
+                      size: 40,
+                    ):
+                    Icon(
                       Icons.arrow_forward,
                       color: Colors.red,
                       size: 24,
                     ),
                     onPressed: () async {
                       Map quoteMap = await Quotes();
-
                       authorName = quoteMap['quote']['author'];
                       quoteText = quoteMap['quote']['body'];
                       setState(() {});
